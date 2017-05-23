@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,127 +5,131 @@
     <title>Daniel Czuba - Résumé</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="//netdna.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
     <![endif]-->
-    <script src="//code.jquery.com/jquery-2.1.0.min.js" async defer></script>
-    <script src="//netdna.bootstrapcdn.com/bootstrap/latest/js/bootstrap.min.js" async defer></script>
     <style>
-        html, body {height: 100%;}
-        body {padding-top: 50px; color: #555555; font-family: sans-serif;}
+        html, body {height: 100%; background: #f5f5f5;}
+        body {color: #333; font-family: sans-serif;}
 
-        #wrap { min-height: 100%; height: auto; margin: 0 auto -60px; padding: 0 0 60px;}
-        #footer{ height: 60px; background-color: #f5f5f5; }
-        .navbar-inverse{background: black;}
-        .page-header{margin-top: 20px;}
-        .container{ width: auto; max-width: 880px; padding: 0 15px;}
-        .container .text-muted{margin: 20px 0;}
-        #content{margin-top: 10px;}
-
-        .label.label-python{background: #3776ab !important;}
-        .label.label-django{background: #092e20 !important;}
-        .label.label-php{background: #8892BF !important;}
-        .label.label-nginx{background: red !important;}
-        .label.label-apache{background: #303284 !important;}
-        .label.label-test-code{background: hotpink !important;}
+        #content {padding: 20px 40px; margin: 50px auto; max-width: 960px; border: 1px solid #333; background: #fff;}
+        @media (max-width: 768px) {
+            #content {padding: 5px 10px; margin: 0; border: 0;}
+        }
     </style>
 </head>
 <body>
-    <div id="wrap">
-        <header class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="/">Daniel Czuba - Résumé</a>
-                </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="https://www.linkedin.com/in/alkemic"><i class="fa fa-lg fa-linkedin"></i></a></li>
-                        <li><a href="https://github.com/Alkemic/"><i class="fa fa-lg fa-github"></i></a></li>
-                    </ul>
-                </div>
+    <div class="container" id="content">
+        <h1>
+            <div class="pull-right">
+                <a href="https://www.linkedin.com/in/alkemic"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAADBElEQVRoQ2NkaN73n2EIA8ZRDwxw7I3GwABHAAPeGLCV5WfYE2PAwMbMBHbn4UcfGHxWXGL49OvvQLsbbj9ODxxLMGKwlOHH6lCLeWcZTj77NCg8gdUDxhK8DGdSTHA68CswBni6Dg1eD1xON2XQEeXB60DGlv2D1wM/KuwZ2Fkg6R4XEOg+xPDx58DnBaxJaKK7KkOeqczQjQFuViaGT2V2DEyMjFg9sff+ewaXpRcGbxICuUxNiJPhZpYFhiOPPfnIYLvwHMO/QdKCIlgTWwOLUl0xbmB6/8Ow9c5bhk+DIN0jhypBDwyKdILHEcPTAyxMjAwawlw4/f3r7z+GW+++o8irC3MysDLhLnqvvP6Kot5PTZghSlucwViKl0GAnQVcJF9+9YVhzfXXDMuuvGQgNothjQEJbjaG54XWOD1w/8N3BqUpJ1DkH+VaMsjyc+DUA6v4tEW5Ga6kmxFMmdnbbzFMO/uUoDqqeeAB0APyBDyQbybDMMFNlaCjYAquv/nGoDXjJP76CFuPjJwYuJ9jyaAggDsGNKafYLiRiVksE/LNNmDJ5w1sAeMCVIuB+zkWQA9wEnIPWfIyE48yPP38C6teqnngHtADijTywMuvvxgk+o8OHg/svveO4fzLLwygpBqlI84AKvUIAVyNR7rGwOdffxgEug9jNEPOA/seBsA+CD5gNu8Mw+lnnzGU0M0Df4GNJ+7OQww/gXUINvC/xhGvB6YDi9QsYNGKDujmgRlAB2RicQDMQZOBTfgcPE34q8CKUGfmqYHzgHj/EYZXX3/jDGV/NRGGDWG6OOVBjUlQ8huwGCDUBTWV5GU4lYy7H/73/38GltYDtPMAoXqAkAcMxXkYzqWa4oyBUQ8gBw22xtyQjwFiGnP4yskBT0KjHhjoTPwQ2B+QI6JDgysZDXgSGvIeeJQH7FLyEe5SDtoYGPIeeAyMAZmhHAOP86yAHmDH3XclMBw/4Jn4CdAD0oPFA4S6d4NJfngOLQ6mECbkltEYIBRCtJYfjQFahzAh8wGkxDBPsEkYtwAAAABJRU5ErkJggg==" /></a>
+                <a href="https://github.com/Alkemic/"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAFK0lEQVRoQ72ZacgWVRTH1dIMsyS1LCpfM0GDAqPFFsqEisSi0C+Rghphy4dKDNo+GGVRgS2QaLRAFAWKqBAuJC6VuKaIFO2vtEe7tqCW/X9Pc2Wcd+6cc8d53gN/HmbuWe9y5tzz9OzRHuottQOE4zP1e/X7s7C/aXM9G1DYXzpuEG4SLhJONHT+qvHNwhvCEoHn2lQ3AORGC4uFobWt/y/4jTAxC+rfVF11AsDYC46ZTvXlNwncKbyeIpgSQIcUvy0MTzFQg3e3ZK4VPvTIegO4NZt1j86meO6RomcsZZ4AVkjJ1YKH17KXMn5QzOuFsVVCllPvSfiSFKtt4N0lnecKBNSFYgHwfkcm2AafklV+LomzyoKIBbBQzJNKzDALfIz6JLvgE/hbbMdEtutyvR9fVFMWwM1iei1ij/Q5IzNwsX6fEC7z+Rblel8j9wprBb4DLwnTI9wz9f7p/FgxgL4a/DMyA8idJnxdUM67bcLgTLZTv6sEzs8Xwl9CP2GkMEEYJwwSfhIuFT4u6DtHzzsjAfD6OOGPMF4MAEEUxKjqzODUj0LpYSsopE7iw1XGe5TeH6jwgQkaVhbAKL38oEKQIStrGeLuYWsSxkjTpqJD3+rFEMNEL+cMuz0tYcTGP4YCth8rfmhGSVGfOKxeIR4+Lu2ksVK+xmHgfPFsC1viZT1MM4RIn+y94iF22EpiISlw+I82pFppNQRApiADVdFdGnwuyZX6zFMk+qpjQvsQwMnCdwYz+ZkZsQ5XfZe7SrLi1ioMJYD7hMcNyws0fluT3jl0PSKehwy+Jwlgo8BVsIou1OAWh9EmWbh3fGoo/IgAfhD4ilYR6fX7Jr1z6DpBPNZ9eQ8BWAeYfT9Q+MVhtEkWSoY9hsIDBMBHg49HFbFClAndSZ4VOEgAnszCfqQm7046RcboWFSSdwXIy7ES27JRd5xr7EpDuLUC1hlABxmITNSdtEzGrjMM7icAsstJVqQa56bUeGswYjfsDKv6bWUh78X9YfHO7qYl4NY332Gr9R2YJTzlYKacoFl76DbkkKnDgg3yvzX76J4LEznemyLpMp+eGajjnCWDL7sFrqAeGhaixLGYEDNOUcUZgFgJttNjQtXVz+NA4EH/g8LsBCFs9w4BsN/Yd2UU7q83anCRED56fD/WZcHQWSBQ6yYV9KPjWIGLFEUbl33Plsn7x6VnXBCiRd4ZCQCn+A7Qzz9boFNWNEYw+wTuDFSuVUSnjyYx949Up/N6L9fDO3kFVH5VnWdaIBuEecLtJR5u1bsLDOfDMJ2P7QIdiDr0u4QoNQ6bgQ49Uy7EZuUrjXGAoReFqZkDzD7bh/4lV0EvzRHjA17mAt9VemYVuzjLF5fLcoxGaCDU6OxhZoF2oFX2luljopL/kZEMGZMPb6uGK842+5KGU6z3yYWeVfAUgJ7JDb1QDy882OW8fhkEyrbL9RpcWqHxTY1NFooZx1vZ5lWnBvCshO/OK4jt9+fFdEdFEBwiii06eecJ9DvZeilnAPUpAZT+T1CVxlZnjnmX98w2BkDBeYZAqj6MrDy8Vtx04zxU59LjWQH+IKeNmPQPTXCYAEmZsX59PrB2BNApAzSdCbSUrBUIQhzaV4SqRlPTAWDvltjM52fYsz3goUvA/wcdQlngTQXAHyzXCO96HPOuQF4XTbC3BErfPFGYfeYxmuPJnwE+avcLcwV3lVsngGCfOzIl9ZUC1WXdAGisPSqwZZKvrEcSQH6yT9UDqc5bTgdZyhGaCrXpP/WC8gk1xIdaAAAAAElFTkSuQmCC" /></a>
             </div>
-        </header>
-        <div class="container" id="content">
-            <div class="static-page">
-                <div class="content">
-                    <ul>
-                        <li>A six-year, commercial programming experience</li>
-                        <li>Experience in the administration of web servers</li>
-                        <li>Very good ability to learn independently and develop skills</li>
-                        <li>Troubleshooting attitude „can do it”</li>
-                        <li>Experience in managing a small (2-3 person) development team</li>
-                    </ul>
-                    <br/>
+            <strong>Daniel Czuba</strong><br/>
+            <small>Fullstack Python Developer/DevOps</small>
+        </h1>
 
-                    <h4><u><strong>Career</strong></u></h4>
-                    <strong>07.2014 – present - STX Next Sp. z o.o. - Fullstack Python Developer</strong><br/>
-                    <ul>
-                        <li>Work in Scrum</li>
-                        <li>Working on internal applications</li>
-                        <li>Working on appliaction for e-commerce client</li>
-                        <li>Development of application using Django, Python 3, Pyramid and Angular</li>
-                    </ul>
-                    <strong>07.2011 – 06.2014 - Mindz Sp. z o.o. Sp. k. - Lead Senior Developer/Head IT</strong><br/>
-                    <ul>
-                        <li>Design and development of application in Zend Framework and Django</li>
-                        <li>Assistance in the technology selection</li>
-                        <li>Create standards within the company</li>
-                        <li>Training and support for less experienced developers</li>
-                        <li>Administration of production and development servers</li>
-                        <li>Analysis of customer requirements</li>
-                    </ul>
-                    <strong>05.2010 – 06.2011 - Effigo Sp. z o.o. - PHP Developer</strong><br/>
-                    <ul>
-                        <li>Design and development of application in Zend Framework</li>
-                        <li>Support for less experienced developers</li>
-                        <li>Administration of production and development servers</li>
-                    </ul>
-                    <strong>2009 – 2012 - Freelance</strong><br/>
-                    <ul>
-                        <li>Creating applications in PHP (Kohana) and Django</li>
-                    </ul>
-                    <br/>
+        <ul>
+            <li>A seven-years, commercial programming experience</li>
+            <li>Experience in the provisioning and configuring of Linux based web servers</li>
+            <li>Very good ability to learn independently and develop skills</li>
+            <li>Troubleshooting attitude „can do it”</li>
+            <li>Experience in maintaining of continuous delivery pipeline</li>
+            <li>Ease to create new relationships and work in a team</li>
+        </ul>
 
-                    <h4><u><strong>Skills</strong></u></h4>
-                    <ul>
-                        <li>Very good knowledge of how web application works</li>
-                        <li>Very good knowledge and administration of Linux environment</li>
-                        <li>Very good knowledge of Zend Framework and PHP5</li>
-                        <li>Very good knowledge of Django and Python (2.x, 3.x)</li>
-                        <li>Good knowledge of databases: MySQL and PostgreSQL</li>
-                        <li>Good knowledge of JavaScript</li>
-                        <li>Good knowledge of GOlang</li>
-                        <li>Knowledge of Scrum, Kanban and basic of other Agile systems</li>
-                        <li>Knowledge of version control systems (SVN and GIT) as user and administrator</li>
-                        <li>Knowledge of databases: CouchDB and MongoDB</li>
-                        <li>Knowledge of search engines Whoosh, Sorl and Sphinx</li>
-                        <li>Knowledge of issues related to usability</li>
-                        <li>Knowledge of the Arduino platform and AVR</li>
-                        <li>English: B2</li>
-                    </ul>
-                    <br/>
+        <hr/>
 
-                    <h4><u><strong>Interests</strong></u></h4>
-                    Cooking, Traditional archery, Dogtrekking, IoT
-                    <br/>
-                    <br/>
-                </div>
+        <h3><strong>Career</strong></h3>
+
+        <div class="row">
+            <div class="col-md-3"><b>07.2014 – 03.2017</b></div>
+            <div class="col-md-9">
+                <b>STX Next Sp. z o.o. - Fullstack Python Developer</b><br/>
+                I was responsible for developing and maintaining existing clients projects in SCRUM environment.<br/>
+                <br/>
+                <u>Project:</u> analytics platform which aims to help C-level management to understand how process of software development is working and performing<br/>
+                <u>Responsibilities:</u> implementing new functionalities, bug-fixing and taking care of local testing instances using Jenkins and Docker as well as shaping client's infrastructure using SaltStack
+                <u>Technologies:</u> Django, AngularJS, SaltStack, GitHub, JIRA, Docker, Jenkins<br/>
+                <br/>
+                <u>Project:</u> e-commerce application aiming to provide bridge between big companies and end customers<br/>
+                <u>Responsibilities:</u> implementing new functionalities, bug-fixing and taking care of local testing instances using Jenkins<br/>
+                <u>Technologies:</u> Django, AngularJS, GitHub, JIRA, Jenkins<br/>
             </div>
         </div>
+        <br/>
+        <div class="row">
+            <div class="col-md-3"><b>07.2014 – 03.2017</b></div>
+            <div class="col-md-9">
+                <b>Mindz Sp. z o.o. Sp. k. - Lead Senior Developer/Head IT</b><br/>
+                I was responsible for creating and maintaining projects, working with customers to choose the best solution for their projects. In addition I was supporting and training less experienced developers and I was administrating company and clients infrastructure.<br/>
+                <br/>
+                <u>Project:</u> networking platform for small and medium business<br/>
+                <u>Responsibilities:</u> designing and implementing platform from the ground<br/>
+                <u>Technologies:</u> Zend Framework, PHP 5, PostgreSQL, Backbone.js<br/>
+                <br/>
+                <u>Project:</u> health and fitness platform<br/>
+                <u>Responsibilities:</u> designing and implementing platform from the ground<br/>
+                <u>Technologies:</u> Zend Framework, PHP 5, MySQL<br/>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-md-3"><b>07.2014 – 03.2017</b></div>
+            <div class="col-md-9">
+                <b>Effigo Sp. z o.o. - PHP Developer</b><br/>
+                I was responsible for creating and maintaining projects. I was supporting and training less experienced developers.<br/>
+                <br/>
+                <u>Project:</u> on-line currency exchange platform<br/>
+                <u>Responsibilities:</u> developing application from scratch, writing base exchange engine in pure SQL<br/>
+                <u>Technologies:</u> Zend Framework, PHP, MySQL, Apache<br/>
+                <br/>
+                <u>Project:</u> funeral services website<br/>
+                <u>Responsibilities:</u> developing website from scratch, coordinating team work<br/>
+                <u>Technologies:</u> Zend Framework, PHP, MySQL, Apache<br/>
+                <br/>
+                <u>Project:</u> taxpayers portal<br/>
+                <u>Responsibilities:</u> developing portal together with the team from scratch, coordinating team work<br/>
+                <u>Technologies:</u> Zend Framework, PHP, MySQL, Apache<br/>
+            </div>
+        </div>
+
+        <hr/>
+
+        <h3><strong>Skills</strong></h3>
+        <ul>
+            <li>Very good knowledge of web application performance</li>
+            <li>Knowledge of languages:</li>
+            <ul>
+                <li>Python (7/10), Django (7/10) and Flask (5/10)</li>
+                <li>PHP5 (7/10) and Zend Framework (7/10)</li>
+                <li>GoLang (5/10)</li>
+                <li>JavaScript (inc. ES6) (6/10), AngularJS (6/10)</li>
+            </ul>
+            <li>Knowledge of databases:</li>
+            <ul>
+                <li>MySQL (6/10), PostgreSQL (6/10)</li>
+            </ul>
+            <li>Knowledge of tools:</li>
+            <ul>
+                <li>Jenkins (4/10)</li>
+                <li>Ansible (5/10), SaltStack (4/10)</li>
+                <li>Grafana/Telefgran/InfluxDB stack (4/10)</li>
+                <li>GIT (7/10), SVN (5/10)</li>
+                <li>Docker (incl. Compose) (5/10)</li>
+                <li>Jmeter (4/10)</li>
+            </ul>
+            <li>Debian administration</li>
+            <li>Knowledge of issues related to usability</li>
+            <li>Knowledge of issues related to security</li>
+            <li>Intermediate English</li>
+        </ul>
+
+        <hr/>
+
+        <h3><strong>Interests</strong></h3>
+        Cooking, Traditional archery, Dogtrekking, Playing strategy games
     </div>
-    <footer id="footer">
-        <div class="container">
-            <p class="text-muted">&copy; 2016 Daniel Czuba</p>
-        </div>
-    </footer>
 </body>
 </html>
-
