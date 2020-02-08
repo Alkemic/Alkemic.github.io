@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dependency injection in Go!</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../static/default.css">
+  </head>
+  <body>
+    <textarea id="source">
+name: inverse
+layout: true
+class: center, middle, inverse
+
+---
+class: center, middle, inverse
+
+# Dependency injection in Go
+Daniel Czuba<br/>
+github.com/Alkemic
+
+---
+layout: false
+
+# The ugly code exmple
+
+```go
+// db.go
+var db *sql.DB
+
+func init() {
+  var err error
+  if db, err = sql.Open("mysql", "root:root@/blog?parseTime=true"); err != nil {
+    log.Fatalln("error connecting to database", err)
+  }
+}
+
+func fetchEntries() ([]*post, error) {
+  entries := []*post{}
+  rows, _ := db.Query(`SELECT * FROM posts;`)
+  //...
+  return entries, nil
+}
+
+func getEntry(id int) (*post, error) {
+  entry := &post{}
+  row := db.QueryRow(`SELECT * FROM posts WHERE id = ?;`, id)
+  row.Scan(&entry.Id, &entry.Title, &entry.Content, &entry.CreatedAt)
+  return entry, nil
+}
+```
+
+---
+# The ugly code exmple
+
+```go
+// http.go
+func listEntriesHandler(w http.ResponseWriter, r *http.Request) {
+  entries, _ := fetchEntries()
+  json.NewEncoder(w).Encode(entries)
+}
+
+func getEntryHandler(w http.ResponseWriter, r *http.Request) {
+  id, _ := strconv.Atoi(r.URL.Query().Get("id"))
+  entry, err := getEntry(id)
+  json.NewEncoder(w).Encode(entry)
+}
+```
+
+---
+# The ugly code exmple
+
+```go
+// main.go
+func main() {
+  http.HandleFunc("/posts", listEntriesHandler)
+  http.HandleFunc("/post", getEntryHandler)
+
+  log.Fatal(http.ListenAndServe(":8080", nil))
+}
+```
+
+---
+class: center, middle
+
+# What are the dependecies?
+
+---
+# A bit cleaner state
+
+```go
+// repository/post.go
+func NewRepository() *repository {
+  db, err := sql.Open("mysql", "root:root@/blog?parseTime=true")
+  if err != nil {
+    log.Fatalln("error connecting to database", err)
+  }
+  return &repository{db: db}
+}
+
+func (s repository) FetchEntries() ([]*Post, error) {
+  entries := []*Post{}
+  rows, _ := s.db.Query(`SELECT * FROM posts;`)
+  // ...
+  return entries, nil
+}
+
+func (s repository) GetEntry(id int) (*Post, error) {
+  entry := &Post{}
+  row := s.db.QueryRow(`SELECT * FROM posts WHERE id = ?;`, id)
+  row.Scan(&entry.Id, &entry.Title, &entry.Content, &entry.CreatedAt)
+  return entry, nil
+}
+```
+
+---
+# A bit cleaner state
+
+```go
+// blog/blog.go
+func NewBlogService() *blogService {
+  postRepository := repository.NewPostRepository()
+  return &blogService{
+    postRepository: postRepository,
+  }
+}
+
+func (s blogService) List() ([]repository.Post, error) {
+  posts, _ := s.postRepository.FetchEntries()
+  return posts, nil
+}
+
+func (s blogService) Get(id int) (repository.Post, error) {
+  post, _ := s.postRepository.GetEntry(id)
+  return post, nil
+}
+```
+
+---
+# A bit cleaner state
+
+```go
+// handler/http.go
+type blogService interface {
+  List() ([]repository.Post, error)
+  Get(id int) (repository.Post, error)
+}
+
+type httpHandler struct {
+  blogService blogService
+}
+
+func NewHandler() http.Handler {
+  blogService := blog.NewBlogService()
+  h := &httpHandler{blogService: blogService}
+  mux := http.NewServeMux()
+  mux.HandleFunc("/posts", h.listEntriesHandler)
+  mux.HandleFunc("/post", h.getEntryHandler)
+  return mux
+}
+
+// ...
+```
+
+---
+# A bit cleaner state
+
+```go
+// main.go
+func main() {
+  httpHandler := handler.NewHandler()
+  srv := http.Server{Addr: ":8080", Handler: httpHandler}
+  if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+    log.Fatalln("server failed: %v", err)
+  }
+}
+```
+
+---
+
+# Problems with this approach
+
+* Everything is tightly coupled
+* Difficult to test
+* Problematic to change dependencies
+* Low overall maintainability
+
+---
+class: center, middle
+
+# What is dependency injection?
+
+---
+# How to inject dependencies
+
+```go
+type repository struct {
+  db *sql.DB
+}
+```
+
+Struct composition
+
+```go
+repo := &repository{
+  db: db,
+}
+```
+
+Constructor/`New` function
+
+```go
+func NewRepository(db *sql.DB) *repository {
+  return &repository{
+    db: db,
+  }
+}
+
+repo := NewRepository(db)
+```
+
+---
+# Time for refactor
+
+```go
+// repository/post.go
+type repository struct {
+  db *sql.DB
+}
+
+func NewRepository(db *sql.DB) *repository {
+  return &repository{db: db}
+}
+
+func (s repository) FetchEntries() ([]*Post, error) {
+  entries := []*Post{}
+  rows, _ := s.db.Query(`SELECT * FROM posts;`)
+  // ...
+  return entries, nil
+}
+
+func (s repository) GetEntry(id int) (*Post, error) {
+  entry := &Post{}
+  row := s.db.QueryRow(`SELECT * FROM posts WHERE id = ?;`, id)
+  row.Scan(&entry.Id, &entry.Title, &entry.Content, &entry.CreatedAt)
+  return entry, nil
+}
+```
+
+---
+# Time for refactor
+
+```go
+// blog/blog.go
+type postRepository interface {
+  FetchEntries() ([]repository.Post, error)
+  GetEntry(id int) (repository.Post, error)
+}
+
+type blogService struct {
+  postRepository postRepository
+}
+
+func NewBlogService(postRepository postRepository) *blogService {
+  return &blogService{postRepository: postRepository}
+}
+
+func (s blogService) List() ([]repository.Post, error) {
+  posts, _ := s.postRepository.FetchEntries()
+  return posts, nil
+}
+
+func (s blogService) Get(id int) (repository.Post, error) {
+  post, _ := s.postRepository.GetEntry(id)
+  return post, nil
+}
+```
+
+---
+# Time for refactor
+
+```go
+// handler/http.go
+type blogService interface {
+  List() ([]repository.Post, error)
+  Get(id int) (repository.Post, error)
+}
+
+type httpHandler struct {
+  blogService blogService
+}
+
+func NewHandler(blogService blogService) http.Handler {
+  h := &httpHandler{blogService: blogService}
+  mux := http.NewServeMux()
+  mux.HandleFunc("/posts", h.listEntriesHandler)
+  mux.HandleFunc("/post", h.getEntryHandler)
+  return mux
+}
+
+// ...
+```
+
+---
+# Time for refactor
+
+```go
+// main.go
+func main() {
+  db := openDB("root:root@/blog?parseTime=true")
+  repo := repository.NewRepository(db)
+  blogService := blog.NewBlogService(repo)
+  httpHandler := handler.NewHandler(blogService)
+  srv := http.Server{Addr: ":8080", Handler: httpHandler}
+  if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+    log.Fatalln("server failed: %v", err)
+  }
+}
+
+func openDB(dsn string) *sql.DB {
+  db, err := sql.Open("mysql", dsn)
+  if err != nil {
+    log.Fatalln("error connecting to database", err)
+  }
+  return db
+}
+```
+
+---
+class: center, middle
+
+# What did dependency injection give us?
+
+---
+# Testing
+
+```go
+// blog/blog_test.go
+type mockPostRepository struct {
+	fetchEntriesResult []repository.Post
+	fetchEntriesErr    error
+	getEntryResult     repository.Post
+	getEntryErr        error
+	getEntryParams     []int
+}
+
+func (m *mockPostRepository) FetchEntries() ([]repository.Post, error) {
+	return m.fetchEntriesResult, m.fetchEntriesErr
+}
+
+func (m *mockPostRepository) GetEntry(id int) (repository.Post, error) {
+	m.getEntryParams = append(m.getEntryParams, id)
+	return m.getEntryResult, m.getEntryErr
+}
+```
+
+---
+# Testing
+
+```go
+// blog/blog_test.go
+func TestBlogServiceGet(t *testing.T) {
+    mockedPostRepository := &mockPostRepository{
+        getEntryResult: repository.Post{
+			Id:        12,
+			Title:     "title 12",
+			CreatedAt: time.Date(2016, 3, 19, 7, 56, 35, 0, time.UTC),
+			Content:   "content 12",
+		},
+    }
+    s := blogService{
+        postRepository: mockedPostRepository,
+    }
+    result, err := s.Get(16)
+    if result.Id != 12 {
+        t.Fatalf("Blog service returned post with wrong ID")
+    }
+}
+```
+
+---
+# Maintainability
+
+```go
+type postRepository interface {
+  FetchEntries() ([]repository.Post, error)
+  GetEntry(id int) (repository.Post, error)
+}
+type authorRepository interface {
+  Get(id int) (repository.Author, error)
+}
+
+type blogService struct {
+  postRepository   postRepository
+  authorRepository authorRepository
+}
+
+func NewBlogService(postRepo postRepository, authorRepo authorRepository)
+  *blogService {
+  return &blogService{postRepository: postRepo, authorRepository: authorRepo}
+}
+
+func (s blogService) Get(id int) (repository.Post, error) {
+  post, _ := s.postRepository.GetEntry(id)
+  post.Author, _ := s.authorRepository.Get(post.AuthorID)
+  return post, nil
+}
+```
+
+---
+# Replacing dependencies
+
+```go
+// repository/post.go
+type repository struct {
+    redisClient *redis.Client
+}
+
+func NewRepository(redisClient *redis.Client) *repository {
+    return &repository{redisClient: redisClient}
+}
+
+func (s repository) GetEntry(id int) (*Post, error) {
+    entry, err := s.redisClient.Get(id).Result()
+	if err != nil {
+        return nil, err
+    }
+    return entry.(*Post), nil
+}
+```
+
+---
+# Replacing dependencies
+
+```go
+// main.go
+func main() {
+  db := openRedis("localhost:6379", "password")
+  repo := repository.NewRepository(db)
+  blogService := blog.NewBlogService(repo)
+  ...
+}
+
+func openRedis(dsn, password string) *redis.Client {
+    return redis.NewClient(&redis.Options{
+        Addr:     dsn,
+        Password: password,
+	})
+}
+```
+
+---
+
+# `time.Now` problem
+
+* Just a function in external package
+* Cannot mock
+* Difficult to test
+
+---
+
+# Solution for `time.Now` problem
+
+```go
+// repository.go
+type repository struct {
+  db    *sql.DB
+  nowFn func() time.Time
+}
+
+func NewRepository(db *sql.DB) *repository {
+  return &repository{
+    db:    db,
+    nowFn: time.Now,
+  }
+}
+```
+
+```go
+// repository_test.go
+repo := &repository{
+  db:    mockedDBConn,
+  nowFn: func() time.Time {
+    return time.Date(2018, 4, 17, 19, 43, 22, 0, time.UTC)
+  },
+}
+```
+
+---
+# DI containers
+```go
+type container struct{
+    db   *sql.DB
+    repo repository
+}
+
+func (c *container) GetDB() *sql.DB {
+    if c.db == nil {
+        c.db, _ = sql.Open()
+    }
+    return c.db
+}
+
+func (c *container) GetRepository() repository {
+    if c.repo == nil {
+        c.repo, _ = NewRepository(c.GetDB())
+    }
+    return c.repo
+}
+```
+
+---
+# `uber/dig`
+```go
+func buildContainer() *dig.Container {
+  container := dig.New()
+  container.Provide(getDBDSN)
+  container.Provide(openDB)
+  container.Provide(handler.NewHandler)
+  container.Provide(repository.NewRepository)
+  container.Provide(blog.NewBlogService)
+  return container
+}
+
+func main() {
+  container := buildContainer()
+  err := container.Invoke(func(httpHandler handler.HttpHandler) {
+    srv := http.Server{Addr: ":8080", Handler: httpHandler}
+    if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+      log.Fatalln("server failed: %v", err)
+    }
+  })
+}
+```
+
+---
+# `google/wire`
+```go
+// wire.go
+//+build wireinject
+
+package main
+
+//...
+
+func InitializeHttpHandler() handler.HttpHandler {
+    wire.Build(handler.NewHandler, blog.NewBlogService,
+        repository.NewRepository, openDB, getDBDSN)
+	return &http.ServeMux{}
+}
+```
+```go
+// main.go
+func main() {
+	httpHandler := InitializeHttpHandler()
+	srv := http.Server{Addr: ":8080", Handler: httpHandler}
+	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+		log.Fatalln("server failed: %v", err)
+	}
+}
+```
+
+---
+# The advantages of dependency injecton
+* Everything is loosly coupled
+* Easy to test
+* Easy to change dependencies
+* Better maintainability
+
+---
+class: center, middle, inverse
+
+# Fin.
+    </textarea>
+    <script src="../static/remark.min.js" />
+    <script>
+      var hljs = remark.highlighter.engine;
+    </script>
+
+    <script>
+      var slideshow = remark.create({
+          highlightStyle: 'monokai',
+          highlightLanguage: 'remark',
+          highlightLines: true
+        }) ;
+    </script>
+  </body>
+</html>
